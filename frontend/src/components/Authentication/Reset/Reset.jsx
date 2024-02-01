@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField,
+} from "@mui/material";
 
 import styles from "./Reset.module.css";
 
@@ -16,9 +25,14 @@ function Reset() {
         email: "",
     });
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+
     const { email } = formState;
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const inputChangeHandler = (event) => {
         setFormState({
@@ -27,15 +41,96 @@ function Reset() {
         });
     };
 
+    const successDialogOpenHandler = () => setSuccessDialogOpen(true);
+    const successDialogCloseHandler = () => {
+        setSuccessDialogOpen(false);
+        navigate("/login");
+    };
+
+    function successModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={successDialogOpen}
+                onClose={successDialogCloseHandler}
+                classes={{ paper: styles.successModal }}>
+                <DialogTitle className={styles.successTitle}>
+                    <div>{"Reset Password Link Sent"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.successMessage}>
+                        <div>
+                            {
+                                "An email with instructions to reset your password has been sent. Please check your email."
+                            }
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.successAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={successDialogCloseHandler}
+                        className={styles.successButton}
+                        autoFocus>
+                        {"OK"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const errorDialogOpenHandler = () => setErrorDialogOpen(true);
+    const errorDialogCloseHandler = () => setErrorDialogOpen(false);
+
+    function errorModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={errorDialogOpen}
+                onClose={errorDialogCloseHandler}
+                classes={{ paper: styles.errorModal }}>
+                <DialogTitle className={styles.errorTitle}>
+                    <div>{"Reset Process Failed"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.errorMessage}>
+                        <div>{"Invalid email. Please try again."}</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.errorAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={errorDialogCloseHandler}
+                        className={styles.errorButton}
+                        autoFocus>
+                        {"OK"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const submitFormHandler = (event) => {
         event.preventDefault();
-
-        console.log()
 
         const isEmailValid = isValidEmail(email);
 
         if (isEmailValid) {
-            dispatch(requestPasswordReset(email));
+            try {
+                setIsLoading(true);
+                dispatch(requestPasswordReset(email));
+                successDialogOpenHandler();
+            } catch (error) {
+                errorDialogOpenHandler();
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            errorDialogOpenHandler();
         }
     };
 
@@ -54,7 +149,7 @@ function Reset() {
                             margin="normal"
                             inputProps={{ className: styles.resetInput }}
                             InputLabelProps={{ className: styles.resetLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Email Address"
@@ -65,14 +160,21 @@ function Reset() {
                             onChange={inputChangeHandler}
                         />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            className={styles.resetButton}>
-                            {"Send Reset Link"}
-                        </Button>
+                        <div className={styles.resetButtonContainer}>
+                            {isLoading ? (
+                                <CircularProgress size={50} color="inherit" />
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    className={styles.resetButton}
+                                    disabled={isLoading}>
+                                    {"Send Reset Link"}
+                                </Button>
+                            )}
+                        </div>
 
                         <div className={styles.anchorsContainer}>
                             <NavLink to="/login" className={styles.anchors}>
@@ -82,6 +184,9 @@ function Reset() {
                     </form>
                 </div>
             </div>
+
+            {successModal()}
+            {errorModal()}
         </>
     );
 }

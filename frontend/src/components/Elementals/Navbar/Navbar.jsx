@@ -34,7 +34,7 @@ function Navbar() {
                     </NavLink>
                 </div>
 
-                {location.pathname !== "/" && (
+                {location.pathname !== "/" && isAuthenticated && (
                     <div className={styles.navContent}>
                         <NavLink to="/" className={styles.navItem}>
                             {"Home"}

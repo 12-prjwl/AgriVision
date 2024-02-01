@@ -13,7 +13,7 @@
     justify-content: center;
     text-decoration: none;
     font-size: 2.7rem;
-    font-weight: bolder;
+    font-weight: 600;
     color: #000000;
 }
 
@@ -24,7 +24,7 @@
 .navItem {
     color: #000000;
     font-size: 2.3rem;
-    font-weight: 700;
+    font-weight: 600;
     margin: 0 3rem;
     padding: 0 0.5rem 0.5rem;
     border-bottom: 0.3rem solid transparent;
@@ -43,7 +43,7 @@
 
 .buttons {
     font-size: 1.8rem;
-    font-weight: 500;
+    font-weight: 600;
     border: none;
     border-radius: 0.5rem;
     padding: 0.3rem 2.5rem;
@@ -52,6 +52,6 @@
 
     &:hover {
         color: #000000;
-        background-color: #00ffbb ;
+        background-color: #00ffbb;
     }
 }

@@ -62,18 +62,11 @@ function Predictor() {
                     <div className={styles.imageCard}>
                         <div
                             className={styles.imageTemplate}
-                            onClick={imageClickHandler}>
-                            {/* {image && (
-                                <img
-                                    src={URL.createObjectURL(image)}
-                                    alt="Predicted Image"
-                                />
-                            )} */}
-                        </div>
+                            onClick={imageClickHandler}></div>
                     </div>
                 </div>
 
-                <div className={styles.predictionReportCard}>
+                <div className={styles.predictionReportCardButton}>
                     <Button
                         variant="contained"
                         size="large"

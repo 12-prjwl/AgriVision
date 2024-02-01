@@ -62,13 +62,13 @@ export const verifyAuthentication = createAsyncThunk(
 
 export const loginUserRequest = createAsyncThunk(
     "auth/loginUserRequest",
-    async ({ email, password }) => {
+    async ({ email, password }, thunkAPI) => {
         const body = JSON.stringify({ email, password });
 
         const response = await authAPI.post("/auth/jwt/create/", body);
 
-        loginSuccess(response.data);
-        fetchUser();
+        thunkAPI.dispatch(loginSuccess(response.data));
+        thunkAPI.dispatch(fetchUser());
 
         return response.data;
     }

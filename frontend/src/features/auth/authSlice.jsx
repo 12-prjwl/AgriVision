@@ -7,8 +7,8 @@ import {
 } from "@/features/auth/authActions";
 
 const initialState = {
-    accessToken: localStorage.getItem("accessToken") || null,
-    refreshToken: localStorage.getItem("refreshToken") || null,
+    accessToken: localStorage.getItem("access"),
+    refreshToken: localStorage.getItem("refresh"),
     isAuthenticated: null,
     user: null,
 };
@@ -24,12 +24,13 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
         },
         loginSuccess: (state, action) => {
-            const { accessToken, refreshToken } = action.payload;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
+            const { access, refresh } = action.payload;
+
+            localStorage.setItem("access", access);
+            localStorage.setItem("refresh", refresh);
             state.isAuthenticated = true;
-            state.accessToken = accessToken;
-            state.refreshToken = refreshToken;
+            state.accessToken = access;
+            state.refreshToken = refresh;
         },
         loginFail: (state) => {
             state.isAuthenticated = false;
@@ -44,8 +45,8 @@ const authSlice = createSlice({
             state.user = null;
         },
         logout: (state) => {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("access");
+            localStorage.removeItem("refresh");
             state.accessToken = null;
             state.refreshToken = null;
             state.isAuthenticated = false;

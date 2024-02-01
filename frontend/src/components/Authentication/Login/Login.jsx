@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -30,6 +31,7 @@ function Login() {
         isShowNewPassword: false,
     });
 
+    const [isLoading, setIsLoading] = useState(false);
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
@@ -58,10 +60,72 @@ function Login() {
         navigate("/");
     };
 
+    function successModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={successDialogOpen}
+                onClose={successDialogCloseHandler}
+                classes={{ paper: styles.successModal }}>
+                <DialogTitle className={styles.successTitle}>
+                    <div>{"Login Successful"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.successMessage}>
+                        <div>{"Welcome! You have successfully logged in."}</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.successAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={successDialogCloseHandler}
+                        className={styles.successButton}
+                        autoFocus>
+                        {"Explore"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const errorDialogOpenHandler = () => setErrorDialogOpen(true);
     const errorDialogCloseHandler = () => setErrorDialogOpen(false);
 
-    const submitFormHandler = async (event) => {
+    function errorModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={errorDialogOpen}
+                onClose={errorDialogCloseHandler}
+                classes={{ paper: styles.errorModal }}>
+                <DialogTitle className={styles.errorTitle}>
+                    <div>{"Login Failed"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.errorMessage}>
+                        <div>
+                            {"Invalid email or password. Please try again."}
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.errorAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={errorDialogCloseHandler}
+                        className={styles.errorButton}
+                        autoFocus>
+                        {"OK"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const submitFormHandler = (event) => {
         event.preventDefault();
 
         const isEmailValid = isValidEmail(email);
@@ -69,10 +133,13 @@ function Login() {
 
         if (isEmailValid && isPasswordValid) {
             try {
-                await dispatch(loginUserRequest({ email, password }));
+                setIsLoading(true);
+                dispatch(loginUserRequest({ email, password }));
                 successDialogOpenHandler();
             } catch (error) {
                 errorDialogOpenHandler();
+            } finally {
+                setIsLoading(false);
             }
         } else {
             errorDialogOpenHandler();
@@ -94,7 +161,7 @@ function Login() {
                             margin="normal"
                             inputProps={{ className: styles.loginInput }}
                             InputLabelProps={{ className: styles.loginLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Email Address"
@@ -109,7 +176,7 @@ function Login() {
                             margin="normal"
                             inputProps={{ className: styles.loginInput }}
                             InputLabelProps={{ className: styles.loginLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Password"
@@ -143,14 +210,21 @@ function Login() {
                             }}
                         />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            className={styles.loginButton}>
-                            {"Login"}
-                        </Button>
+                        <div className={styles.loginButtonContainer}>
+                            {isLoading ? (
+                                <CircularProgress size={50} color="inherit" />
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    className={styles.loginButton}
+                                    disabled={isLoading}>
+                                    {"Login"}
+                                </Button>
+                            )}
+                        </div>
 
                         <div className={styles.anchorsContainer}>
                             <NavLink
@@ -166,35 +240,8 @@ function Login() {
                 </div>
             </div>
 
-            <Dialog
-                open={successDialogOpen}
-                onClose={successDialogCloseHandler}>
-                <DialogTitle>{"Login Successful"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {"Welcome! You have successfully logged in."}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={successDialogCloseHandler} autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            <Dialog open={errorDialogOpen} onClose={errorDialogCloseHandler}>
-                <DialogTitle>{"Login Failed"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {"Invalid email or password. Please try again."}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={errorDialogCloseHandler} autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {successModal()}
+            {errorModal()}
         </>
     );
 }

@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    InputAdornment,
+    TextField,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import styles from "./Password.module.css";
@@ -10,7 +21,8 @@ import { confirmPasswordReset } from "@/features/auth/authActions";
 
 import Navbar from "@/components/Elementals/Navbar/Navbar";
 
-const isValidPasswordLength = (value) => value.trim().length > 7 && !/\s/.test(value);
+const isValidPasswordLength = (value) =>
+    value.trim().length > 7 && !/\s/.test(value);
 const arePasswordsEqual = (password1, password2) => password1 === password2;
 
 function Password() {
@@ -23,6 +35,10 @@ function Password() {
         isShowConfirmPassword: false,
     });
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+
     const {
         newPassword,
         confirmPassword,
@@ -31,6 +47,7 @@ function Password() {
     } = formState;
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const inputChangeHandler = (event) => {
         setFormState({
@@ -53,6 +70,81 @@ function Password() {
         });
     };
 
+    const successDialogOpenHandler = () => setSuccessDialogOpen(true);
+    const successDialogCloseHandler = () => {
+        setSuccessDialogOpen(false);
+        navigate("/login");
+    };
+
+    function successModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={successDialogOpen}
+                onClose={successDialogCloseHandler}
+                classes={{ paper: styles.successModal }}>
+                <DialogTitle className={styles.successTitle}>
+                    <div>{"Password Changed!"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.successMessage}>
+                        <div>
+                            {
+                                "Password changed successfully, You can login now."
+                            }
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.successAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={successDialogCloseHandler}
+                        className={styles.successButton}
+                        autoFocus>
+                        {"Login"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const errorDialogOpenHandler = () => setErrorDialogOpen(true);
+    const errorDialogCloseHandler = () => setErrorDialogOpen(false);
+
+    function errorModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={errorDialogOpen}
+                onClose={errorDialogCloseHandler}
+                classes={{ paper: styles.errorModal }}>
+                <DialogTitle className={styles.errorTitle}>
+                    <div>{"Password Change Failed"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.errorMessage}>
+                        <div>
+                            {"Passwords does not match. Please try again"}
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.errorAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={errorDialogCloseHandler}
+                        className={styles.errorButton}
+                        autoFocus>
+                        {"OK"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const submitFormHandler = (event) => {
         event.preventDefault();
 
@@ -64,14 +156,24 @@ function Password() {
         );
 
         if (isPassword1Valid && isPassword2Valid && arePasswordsEquals) {
-            dispatch(
-                confirmPasswordReset({
-                    uid,
-                    token,
-                    new_password: newPassword,
-                    re_new_password: confirmPassword,
-                })
-            );
+            try {
+                setIsLoading(true);
+                dispatch(
+                    confirmPasswordReset({
+                        uid,
+                        token,
+                        new_password: newPassword,
+                        re_new_password: confirmPassword,
+                    })
+                );
+                successDialogOpenHandler();
+            } catch (error) {
+                errorDialogOpenHandler();
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            errorDialogOpenHandler();
         }
     };
 
@@ -94,7 +196,7 @@ function Password() {
                             InputLabelProps={{
                                 className: styles.passwordLabels,
                             }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="New Password"
@@ -107,9 +209,7 @@ function Password() {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
-                                            onClick={
-                                                toggleShowNewPassword
-                                            }
+                                            onClick={toggleShowNewPassword}
                                             edge="end">
                                             {isShowNewPassword ? (
                                                 <VisibilityOff
@@ -136,7 +236,7 @@ function Password() {
                             InputLabelProps={{
                                 className: styles.passwordLabels,
                             }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Confirm Password"
@@ -149,9 +249,7 @@ function Password() {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
-                                            onClick={
-                                                toggleShowConfirmPassword
-                                            }
+                                            onClick={toggleShowConfirmPassword}
                                             edge="end">
                                             {isShowConfirmPassword ? (
                                                 <VisibilityOff
@@ -172,17 +270,27 @@ function Password() {
                             }}
                         />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            className={styles.passwordButton}>
-                            {"Change"}
-                        </Button>
+                        <div className={styles.passwordButtonContainer}>
+                            {isLoading ? (
+                                <CircularProgress size={50} color="inherit" />
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    className={styles.passwordButton}
+                                    disabled={isLoading}>
+                                    {"Change"}
+                                </Button>
+                            )}
+                        </div>
                     </form>
                 </div>
             </div>
+
+            {successModal()}
+            {errorModal()}
         </>
     );
 }

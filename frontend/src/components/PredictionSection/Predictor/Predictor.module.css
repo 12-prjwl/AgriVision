@@ -21,6 +21,7 @@
 
 .uploadButton {
     font-size: 1.5rem;
+    font-weight: 600;
     margin: 2.5rem;
     width: 35%;
     border: none;
@@ -69,7 +70,7 @@
     border-radius: 1.6rem;
 }
 
-.predictionReportCard {
+.predictionReportCardButton {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -86,6 +87,7 @@
 
 .predictButton {
     font-size: 1.5rem;
+    font-weight: 600;
     margin: 2.5rem;
     width: 80%;
     border: none;

@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    InputAdornment,
+    TextField,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import styles from "./Signup.module.css";
@@ -22,9 +33,14 @@ function Signup() {
         isShowNewPassword: false,
     });
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+
     const { name, email, password, isShowNewPassword } = formState;
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const inputChangeHandler = (event) => {
         setFormState({
@@ -40,6 +56,91 @@ function Signup() {
         });
     };
 
+    const successDialogOpenHandler = () => setSuccessDialogOpen(true);
+    const successDialogCloseHandler = () => {
+        setSuccessDialogOpen(false);
+        navigate("/login");
+    };
+
+    function successModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={successDialogOpen}
+                onClose={successDialogCloseHandler}
+                classes={{ paper: styles.successModal }}>
+                <DialogTitle className={styles.successTitle}>
+                    <div>{"Signup Successful"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.successMessage}>
+                        <div>
+                            {"Your account has been successfully created!"}
+                        </div>
+                        <div>
+                            {
+                                "A confirmation link has been sent to your Gmail for account activation."
+                            }
+                        </div>
+                        <div>
+                            {
+                                "Please check your email and follow the instructions to activate your account."
+                            }
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.successAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={successDialogCloseHandler}
+                        className={styles.successButton}
+                        autoFocus>
+                        {"Login"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    const errorDialogOpenHandler = () => setErrorDialogOpen(true);
+    const errorDialogCloseHandler = () => setErrorDialogOpen(false);
+
+    function errorModal() {
+        return (
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={errorDialogOpen}
+                onClose={errorDialogCloseHandler}
+                classes={{ paper: styles.errorModal }}>
+                <DialogTitle className={styles.errorTitle}>
+                    <div>{"Signup Failed"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText className={styles.errorMessage}>
+                        <div>
+                            {
+                                "Invalid username, email or password. Please try again."
+                            }
+                        </div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className={styles.errorAction}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        onClick={errorDialogCloseHandler}
+                        className={styles.errorButton}
+                        autoFocus>
+                        {"OK"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     const submitFormHandler = (event) => {
         event.preventDefault();
 
@@ -48,7 +149,17 @@ function Signup() {
         const isPasswordValid = isValidPassword(password);
 
         if (isUsernameValid && isEmailValid && isPasswordValid) {
-            dispatch(signupUserRequest({ name, email, password }));
+            try {
+                setIsLoading(true);
+                dispatch(signupUserRequest({ name, email, password }));
+                successDialogOpenHandler();
+            } catch (error) {
+                errorDialogOpenHandler();
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            errorDialogOpenHandler();
         }
     };
 
@@ -67,7 +178,7 @@ function Signup() {
                             margin="normal"
                             inputProps={{ className: styles.signupInput }}
                             InputLabelProps={{ className: styles.signupLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Username"
@@ -82,7 +193,7 @@ function Signup() {
                             margin="normal"
                             inputProps={{ className: styles.signupInput }}
                             InputLabelProps={{ className: styles.signupLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Email Address"
@@ -97,7 +208,7 @@ function Signup() {
                             margin="normal"
                             inputProps={{ className: styles.signupInput }}
                             InputLabelProps={{ className: styles.signupLabels }}
-                            color="warning"
+                            color="black"
                             required
                             fullWidth
                             label="Password"
@@ -131,14 +242,21 @@ function Signup() {
                             }}
                         />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            className={styles.signupButton}>
-                            {"Signup"}
-                        </Button>
+                        <div className={styles.signupButtonContainer}>
+                            {isLoading ? (
+                                <CircularProgress size={50} color="inherit" />
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    className={styles.signupButton}
+                                    disabled={isLoading}>
+                                    {"Signup"}
+                                </Button>
+                            )}
+                        </div>
 
                         <div className={styles.anchorsContainer}>
                             <NavLink to="/login" className={styles.anchors}>
@@ -148,6 +266,9 @@ function Signup() {
                     </form>
                 </div>
             </div>
+
+            {successModal()}
+            {errorModal()}
         </>
     );
 }
