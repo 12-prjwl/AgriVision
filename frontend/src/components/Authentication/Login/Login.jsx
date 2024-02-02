@@ -62,31 +62,33 @@ function Login() {
 
     function successModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={successDialogOpen}
-                onClose={successDialogCloseHandler}
-                classes={{ paper: styles.successModal }}>
-                <DialogTitle className={styles.successTitle}>
-                    <div>{"Login Successful"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.successMessage}>
-                        <div>{"Welcome! You have successfully logged in."}</div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.successAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={successDialogCloseHandler}
-                        className={styles.successButton}
-                        autoFocus>
-                        {"Explore"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={successDialogOpen}
+                    onClose={successDialogCloseHandler}
+                    classes={{ paper: styles.successModal }}>
+                    <DialogTitle className={styles.successTitle}>
+                        {"Login Successful"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.successMessage}>
+                            {"Welcome! You have successfully logged in."}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.successAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={successDialogCloseHandler}
+                            className={styles.successButton}
+                            autoFocus>
+                            {"Explore"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
@@ -95,37 +97,37 @@ function Login() {
 
     function errorModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={errorDialogOpen}
-                onClose={errorDialogCloseHandler}
-                classes={{ paper: styles.errorModal }}>
-                <DialogTitle className={styles.errorTitle}>
-                    <div>{"Login Failed"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.errorMessage}>
-                        <div>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={errorDialogOpen}
+                    onClose={errorDialogCloseHandler}
+                    classes={{ paper: styles.errorModal }}>
+                    <DialogTitle className={styles.errorTitle}>
+                        {"Login Failed"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.errorMessage}>
                             {"Invalid email or password. Please try again."}
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.errorAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={errorDialogCloseHandler}
-                        className={styles.errorButton}
-                        autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.errorAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={errorDialogCloseHandler}
+                            className={styles.errorButton}
+                            autoFocus>
+                            {"OK"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
-    const submitFormHandler = (event) => {
+    const submitFormHandler = async (event) => {
         event.preventDefault();
 
         const isEmailValid = isValidEmail(email);
@@ -134,8 +136,23 @@ function Login() {
         if (isEmailValid && isPasswordValid) {
             try {
                 setIsLoading(true);
-                dispatch(loginUserRequest({ email, password }));
-                successDialogOpenHandler();
+                await dispatch(loginUserRequest({ email, password }))
+                    .then((action) => {
+                        const response = action.payload;
+
+                        if (response) {
+                            successDialogOpenHandler();
+                        } else {
+                            errorDialogOpenHandler();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        errorDialogOpenHandler();
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                    });
             } catch (error) {
                 errorDialogOpenHandler();
             } finally {

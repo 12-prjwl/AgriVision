@@ -12,6 +12,7 @@ import {
     IconButton,
     InputAdornment,
     TextField,
+    Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -64,43 +65,45 @@ function Signup() {
 
     function successModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="md"
-                open={successDialogOpen}
-                onClose={successDialogCloseHandler}
-                classes={{ paper: styles.successModal }}>
-                <DialogTitle className={styles.successTitle}>
-                    <div>{"Signup Successful"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.successMessage}>
-                        <div>
-                            {"Your account has been successfully created!"}
-                        </div>
-                        <div>
-                            {
-                                "A confirmation link has been sent to your Gmail for account activation."
-                            }
-                        </div>
-                        <div>
-                            {
-                                "Please check your email and follow the instructions to activate your account."
-                            }
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.successAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={successDialogCloseHandler}
-                        className={styles.successButton}
-                        autoFocus>
-                        {"Login"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="md"
+                    open={successDialogOpen}
+                    onClose={successDialogCloseHandler}
+                    classes={{ paper: styles.successModal }}>
+                    <DialogTitle className={styles.successTitle}>
+                        {"Signup Successful"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.successMessage}>
+                            <Typography className={styles.successTypography}>
+                                {"Your account has been successfully created!"}
+                            </Typography>
+                            <Typography className={styles.successTypography}>
+                                {
+                                    "A confirmation link has been sent to your Gmail for account activation."
+                                }
+                            </Typography>
+                            <Typography className={styles.successTypography}>
+                                {
+                                    "Please check your email and follow the instructions to activate your account."
+                                }
+                            </Typography>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.successAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={successDialogCloseHandler}
+                            className={styles.successButton}
+                            autoFocus>
+                            {"Login"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
@@ -109,39 +112,39 @@ function Signup() {
 
     function errorModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={errorDialogOpen}
-                onClose={errorDialogCloseHandler}
-                classes={{ paper: styles.errorModal }}>
-                <DialogTitle className={styles.errorTitle}>
-                    <div>{"Signup Failed"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.errorMessage}>
-                        <div>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={errorDialogOpen}
+                    onClose={errorDialogCloseHandler}
+                    classes={{ paper: styles.errorModal }}>
+                    <DialogTitle className={styles.errorTitle}>
+                        {"Signup Failed"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.errorMessage}>
                             {
                                 "Invalid username, email or password. Please try again."
                             }
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.errorAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={errorDialogCloseHandler}
-                        className={styles.errorButton}
-                        autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.errorAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={errorDialogCloseHandler}
+                            className={styles.errorButton}
+                            autoFocus>
+                            {"OK"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
-    const submitFormHandler = (event) => {
+    const submitFormHandler = async (event) => {
         event.preventDefault();
 
         const isUsernameValid = isValidUsername(name);
@@ -151,9 +154,10 @@ function Signup() {
         if (isUsernameValid && isEmailValid && isPasswordValid) {
             try {
                 setIsLoading(true);
-                dispatch(signupUserRequest({ name, email, password }));
+                await dispatch(signupUserRequest({ name, email, password }));
                 successDialogOpenHandler();
             } catch (error) {
+                console.error(error);
                 errorDialogOpenHandler();
             } finally {
                 setIsLoading(false);

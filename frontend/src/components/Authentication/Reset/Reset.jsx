@@ -49,35 +49,35 @@ function Reset() {
 
     function successModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={successDialogOpen}
-                onClose={successDialogCloseHandler}
-                classes={{ paper: styles.successModal }}>
-                <DialogTitle className={styles.successTitle}>
-                    <div>{"Reset Password Link Sent"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.successMessage}>
-                        <div>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={successDialogOpen}
+                    onClose={successDialogCloseHandler}
+                    classes={{ paper: styles.successModal }}>
+                    <DialogTitle className={styles.successTitle}>
+                        {"Reset Password Link Sent"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.successMessage}>
                             {
                                 "An email with instructions to reset your password has been sent. Please check your email."
                             }
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.successAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={successDialogCloseHandler}
-                        className={styles.successButton}
-                        autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.successAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={successDialogCloseHandler}
+                            className={styles.successButton}
+                            autoFocus>
+                            {"OK"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
@@ -86,35 +86,37 @@ function Reset() {
 
     function errorModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={errorDialogOpen}
-                onClose={errorDialogCloseHandler}
-                classes={{ paper: styles.errorModal }}>
-                <DialogTitle className={styles.errorTitle}>
-                    <div>{"Reset Process Failed"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.errorMessage}>
-                        <div>{"Invalid email. Please try again."}</div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.errorAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={errorDialogCloseHandler}
-                        className={styles.errorButton}
-                        autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={errorDialogOpen}
+                    onClose={errorDialogCloseHandler}
+                    classes={{ paper: styles.errorModal }}>
+                    <DialogTitle className={styles.errorTitle}>
+                        {"Reset Process Failed"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.errorMessage}>
+                            {"Invalid email. Please try again."}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.errorAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={errorDialogCloseHandler}
+                            className={styles.errorButton}
+                            autoFocus>
+                            {"OK"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
-    const submitFormHandler = (event) => {
+    const submitFormHandler = async (event) => {
         event.preventDefault();
 
         const isEmailValid = isValidEmail(email);
@@ -122,7 +124,7 @@ function Reset() {
         if (isEmailValid) {
             try {
                 setIsLoading(true);
-                dispatch(requestPasswordReset(email));
+                await dispatch(requestPasswordReset(email));
                 successDialogOpenHandler();
             } catch (error) {
                 errorDialogOpenHandler();

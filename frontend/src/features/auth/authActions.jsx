@@ -69,7 +69,6 @@ export const loginUserRequest = createAsyncThunk(
 
         thunkAPI.dispatch(loginSuccess(response.data));
         thunkAPI.dispatch(fetchUser());
-
         return response.data;
     }
 );

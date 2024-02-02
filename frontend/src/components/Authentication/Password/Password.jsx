@@ -78,35 +78,35 @@ function Password() {
 
     function successModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={successDialogOpen}
-                onClose={successDialogCloseHandler}
-                classes={{ paper: styles.successModal }}>
-                <DialogTitle className={styles.successTitle}>
-                    <div>{"Password Changed!"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.successMessage}>
-                        <div>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={successDialogOpen}
+                    onClose={successDialogCloseHandler}
+                    classes={{ paper: styles.successModal }}>
+                    <DialogTitle className={styles.successTitle}>
+                        {"Password Changed!"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.successMessage}>
                             {
                                 "Password changed successfully, You can login now."
                             }
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.successAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={successDialogCloseHandler}
-                        className={styles.successButton}
-                        autoFocus>
-                        {"Login"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.successAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={successDialogCloseHandler}
+                            className={styles.successButton}
+                            autoFocus>
+                            {"Login"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
@@ -115,37 +115,37 @@ function Password() {
 
     function errorModal() {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={errorDialogOpen}
-                onClose={errorDialogCloseHandler}
-                classes={{ paper: styles.errorModal }}>
-                <DialogTitle className={styles.errorTitle}>
-                    <div>{"Password Change Failed"}</div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText className={styles.errorMessage}>
-                        <div>
+            <>
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={errorDialogOpen}
+                    onClose={errorDialogCloseHandler}
+                    classes={{ paper: styles.errorModal }}>
+                    <DialogTitle className={styles.errorTitle}>
+                        {"Password Change Failed"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={styles.errorMessage}>
                             {"Passwords does not match. Please try again"}
-                        </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions className={styles.errorAction}>
-                    <Button
-                        fullWidth
-                        size="large"
-                        onClick={errorDialogCloseHandler}
-                        className={styles.errorButton}
-                        autoFocus>
-                        {"OK"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions className={styles.errorAction}>
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={errorDialogCloseHandler}
+                            className={styles.errorButton}
+                            autoFocus>
+                            {"OK"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     }
 
-    const submitFormHandler = (event) => {
+    const submitFormHandler = async (event) => {
         event.preventDefault();
 
         const isPassword1Valid = isValidPasswordLength(newPassword);
@@ -158,7 +158,7 @@ function Password() {
         if (isPassword1Valid && isPassword2Valid && arePasswordsEquals) {
             try {
                 setIsLoading(true);
-                dispatch(
+                await dispatch(
                     confirmPasswordReset({
                         uid,
                         token,
@@ -168,6 +168,7 @@ function Password() {
                 );
                 successDialogOpenHandler();
             } catch (error) {
+                console.error(error);
                 errorDialogOpenHandler();
             } finally {
                 setIsLoading(false);

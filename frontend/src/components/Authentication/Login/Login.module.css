@@ -93,12 +93,14 @@
     color: #00e676;
     font-size: 3rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .successMessage {
     color: #00e676;
     font-size: 2rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .successAction {
@@ -130,12 +132,14 @@
     color: #ff1744;
     font-size: 3rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .errorMessage {
     color: #ff1744;
     font-size: 2rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .errorAction {
