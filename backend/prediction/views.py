@@ -11,7 +11,7 @@ import numpy as np
 
 
 model = YOLO(
-    "D:\\Niru\\Coding\\Projects\\Important\\AgriVision\\1\\AgriVision-React-Django-ML\\backend\\prediction\\mlModel\\best.pt"
+    "" # path to mlModel/best.pt
 )
 
 
@@ -30,12 +30,8 @@ def imagePrediction(request):
 
             for result in results:
                 im_array = result.plot()
-                im = Image.fromarray(
-                    im_array[..., ::-1]
-                )  
-                im.save(
-                    "D:\\Niru\\Coding\\Projects\\Important\\AgriVision\\1\\AgriVision-React-Django-ML\\backend\\media\\results.jpg"
-                )
+                im = Image.fromarray(im_array[..., ::-1])
+                im.save("")  # path to media/results.jpg
 
                 tensor_data_0 = results[0].masks.data[0]
                 numpy_data_0 = tensor_data_0.numpy()
@@ -64,9 +60,7 @@ def imagePrediction(request):
 
                 boxes = result.boxes.cpu().numpy()
                 for box in boxes:
-                    detected_class = result.names[
-                        int(box.cls[0])
-                    ] 
+                    detected_class = result.names[int(box.cls[0])]
                     detected_classes.append(detected_class)
 
                     confidence_score = box.conf[0]
@@ -78,7 +72,7 @@ def imagePrediction(request):
             predicted_image = PredictedImage.objects.create()
 
             with open(
-                "D:\\Niru\\Coding\\Projects\\Important\\AgriVision\\1\\AgriVision-React-Django-ML\\backend\\media\\results.jpg",
+                "",  # path to media/results.jpg
                 "rb",
             ) as file:
                 content = file.read()
