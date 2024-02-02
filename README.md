@@ -1,1 +1,1 @@
-# AgriVision-React-Django-ML
+# AgriVision
