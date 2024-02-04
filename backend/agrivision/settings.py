@@ -106,9 +106,9 @@ WSGI_APPLICATION = "agrivision.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "", # database name
-        "USER": "", # database user
-        "PASSWORD": "", # database password
+        "NAME": "agrivisiondb",
+        "USER": "postgres",
+        "PASSWORD": "niraj@123",
         "HOST": "localhost",
     }
 }
@@ -116,8 +116,8 @@ DATABASES = {
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "" # host email to send authentication related emails
-EMAIL_HOST_PASSWORD = "" # App app password from google
+EMAIL_HOST_USER = "burnkoli10@gmail.com"
+EMAIL_HOST_PASSWORD = "ztppgdvchustmhdy"
 EMAIL_USE_TLS = True
 
 
@@ -147,8 +147,8 @@ USE_TZ = True
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "../../frontend/dist")]
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_DIR = os.path.join(BASE_DIR, "media")
 MEDIA_ROOT = MEDIA_DIR

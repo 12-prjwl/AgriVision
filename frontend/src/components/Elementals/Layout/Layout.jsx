@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
 import { verifyAuthentication, fetchUser } from "@/features/auth/authActions";
+import { resetPrediction } from "@/features/prediction/predictionSlice";
 
 function Layout({ title, children }) {
     const dispatch = useDispatch();
@@ -14,6 +15,10 @@ function Layout({ title, children }) {
 
     useEffect(() => {
         dispatch(fetchUser());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(resetPrediction());
     }, [dispatch]);
 
     return (

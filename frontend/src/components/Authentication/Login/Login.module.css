@@ -1,3 +1,9 @@
+.loginContainer {
+    height: 100vh;
+    background-image: url("/authentication.jpg");
+    background-size: cover;
+}
+
 .loginCard {
     display: flex;
     flex-direction: column;

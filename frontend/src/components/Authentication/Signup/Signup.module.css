@@ -1,3 +1,9 @@
+.signupContainer {
+    height: 100vh;
+    background-image: url("/authentication.jpg");
+    background-size: cover;
+}
+
 .signupCard {
     display: flex;
     flex-direction: column;

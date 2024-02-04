@@ -1,3 +1,9 @@
+.resetContainer {
+    height: 100vh;
+    background-image: url("/authentication.jpg");
+    background-size: cover;
+}
+
 .resetCard {
     display: flex;
     flex-direction: column;

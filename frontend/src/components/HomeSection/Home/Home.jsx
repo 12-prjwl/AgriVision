@@ -16,7 +16,7 @@ function Home() {
                 <Navbar />
 
                 <div className={styles.modelContainer}>
-                    <NavLink to="/predictor">
+                    <NavLink to={!isAuthenticated ? "/" : "/predictor"}>
                         <Button
                             type="submit"
                             fullWidth
