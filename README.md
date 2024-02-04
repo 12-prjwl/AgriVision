@@ -1,22 +1,91 @@
 # AgriVision
 
-Installation Steps:
+## Installation
 
-A: Parent Directory
+### Create a virtual environment
 
-1. pip install virtualenv
-2. virtualenv env_name
-3. env_name/scripts/activate
+```
+pip install virtualenv
+```
 
-B: Frontend Directory
+```
+virtualenv env_name
+```
 
-1. npm install
-2. npm run build
-3. npm run dev
+```
+env_name\scripts\activate
+```
 
-C: Backend Directory
+### Make and configure a .env File
 
-1. pip install -r requirements.txt
-2. python manage.py makemigrations
-3. python manage.py migrate
-4. python manage.py runserver
+```env
+NODE_ENV = '' // development
+
+VITE_REACT_APP_API_URL = "" // http://localhost:8000
+```
+
+## Install frontend packages
+
+```
+npm install
+```
+
+```
+npm run build
+```
+
+```
+npm run dev
+```
+
+## Install backend packages
+
+```
+pip install -r requirements.txt
+```
+
+### Configure settings.py
+
+```
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "", # db name -> agrivisiondb
+        "USER": "", # db user -> postgres
+        "PASSWORD": "", # db password -> johndoe@123
+        "HOST": "localhost",
+    }
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "" # email to send authentication messages -> johndoe@email.com
+EMAIL_HOST_PASSWORD = "" # email app password -> for gmail it is 16 random characters
+EMAIL_USE_TLS = True
+```
+
+### Important django commands
+
+```
+python manage.py makemigrations
+```
+
+```
+python manage.py migrate
+```
+
+```
+python manage.py collectstatic
+```
+
+## Run servers
+
+```
+npm run dev
+```
+```
+python manage.py runserver
+```
+
+### Navigate to django server url and all set
